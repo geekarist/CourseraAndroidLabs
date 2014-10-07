@@ -1,0 +1,10 @@
+Warmup/a
+ActivityOne.onCreate()
+ActivityOne.onStart()
+ActivityOne.onResume()
+ActivityOne.onPause()
+ActivityOne.onStop()
+ActivityTwo.onCreate()
+ActivityTwo.onStart()
+ActivityTwo.onResume()
+Warmup/b
