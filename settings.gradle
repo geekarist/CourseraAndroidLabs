@@ -1,4 +1,3 @@
 include ':app', ':week2-activityLab'
-include ':activityLab'
 include ':intentsLab'
 include ':myBrowser'
