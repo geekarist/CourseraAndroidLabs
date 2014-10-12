@@ -1,4 +1,4 @@
-include ':app', ':week2-activityLab'
-include ':myBrowser'
-include ':intentsLab'
-include ':intentsLabTest'
+include ':week1:app'
+include ':week2'
+include ':week3:intents:myBrowser'
+include ':week3:intents:intentsLab'
