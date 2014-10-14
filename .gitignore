@@ -28,3 +28,4 @@ proguard/
 .DS_Store
 .idea
 *.iml
+import-summary.txt
