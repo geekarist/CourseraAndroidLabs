@@ -1,6 +1,7 @@
 package course.labs.permissionslab;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.provider.Browser;
@@ -27,9 +28,7 @@ public class BookmarksActivity extends Activity {
 
             @Override
             public void onClick(View v) {
-
                 loadBookmarks();
-
             }
         });
 
@@ -38,9 +37,7 @@ public class BookmarksActivity extends Activity {
 
             @Override
             public void onClick(View v) {
-
                 startGoToDangerousActivity();
-
             }
         });
 
@@ -74,12 +71,8 @@ public class BookmarksActivity extends Activity {
     }
 
     private void startGoToDangerousActivity() {
-
         Log.i(TAG, "Entered startGoToDangerousActivity()");
-
-        // TODO - Start the GoToDangerousActivity
-
-
+        startActivity(new Intent(this, GoToDangerousActivity.class));
     }
 
 }
