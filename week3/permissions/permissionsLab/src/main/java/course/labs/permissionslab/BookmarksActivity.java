@@ -1,7 +1,6 @@
 package course.labs.permissionslab;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.provider.Browser;
@@ -12,75 +11,75 @@ import android.widget.Button;
 import android.widget.TextView;
 
 public class BookmarksActivity extends Activity {
-	
-	private static final String TAG = "Lab-Permissions";
 
-	static final String[] projection = { Browser.BookmarkColumns.TITLE,
-			Browser.BookmarkColumns.URL };
+    private static final String TAG = "Lab-Permissions";
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.bookmarks_activity);
+    static final String[] projection = {Browser.BookmarkColumns.TITLE,
+            Browser.BookmarkColumns.URL};
 
-		Button getBookmarksButton = (Button) findViewById(R.id.get_bookmarks_button);
-		getBookmarksButton.setOnClickListener(new OnClickListener() {
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.bookmarks_activity);
 
-			@Override
-			public void onClick(View v) {
+        Button getBookmarksButton = (Button) findViewById(R.id.get_bookmarks_button);
+        getBookmarksButton.setOnClickListener(new OnClickListener() {
 
-				loadBookmarks();
+            @Override
+            public void onClick(View v) {
 
-			}
-		});
+                loadBookmarks();
 
-		Button goToDangerousActivityButton = (Button) findViewById(R.id.go_to_dangerous_activity_button);
-		goToDangerousActivityButton.setOnClickListener(new OnClickListener() {
+            }
+        });
 
-			@Override
-			public void onClick(View v) {
+        Button goToDangerousActivityButton = (Button) findViewById(R.id.go_to_dangerous_activity_button);
+        goToDangerousActivityButton.setOnClickListener(new OnClickListener() {
 
-				startGoToDangerousActivity();
+            @Override
+            public void onClick(View v) {
 
-			}
-		});
+                startGoToDangerousActivity();
 
-	}
+            }
+        });
 
-	private void loadBookmarks() {
+    }
 
-		Log.i(TAG, "Entered loadBookmarks()");
+    private void loadBookmarks() {
 
-		String text = "";
+        Log.i(TAG, "Entered loadBookmarks()");
 
-		Cursor query = getContentResolver().query(Browser.BOOKMARKS_URI,
-				projection, null, null, null);
+        String text = "";
 
-		query.moveToFirst();
-		while (query.moveToNext()) {
+        Cursor query = getContentResolver().query(Browser.BOOKMARKS_URI,
+                projection, null, null, null);
 
-			text += query.getString(query
-					.getColumnIndex(Browser.BookmarkColumns.TITLE));
-			text += "\n";
-			text += query.getString(query
-					.getColumnIndex(Browser.BookmarkColumns.URL));
-			text += "\n\n";
+        query.moveToFirst();
+        while (query.moveToNext()) {
 
-		}
+            text += query.getString(query
+                    .getColumnIndex(Browser.BookmarkColumns.TITLE));
+            text += "\n";
+            text += query.getString(query
+                    .getColumnIndex(Browser.BookmarkColumns.URL));
+            text += "\n\n";
 
-		TextView box = (TextView) findViewById(R.id.text);
-		box.setText(text);
+        }
 
-		Log.i(TAG, "Bookmarks loaded");
-	}
+        TextView box = (TextView) findViewById(R.id.text);
+        box.setText(text);
 
-	private void startGoToDangerousActivity() {
+        Log.i(TAG, "Bookmarks loaded");
+    }
 
-		Log.i(TAG, "Entered startGoToDangerousActivity()");
+    private void startGoToDangerousActivity() {
 
-		// TODO - Start the GoToDangerousActivity
-		
+        Log.i(TAG, "Entered startGoToDangerousActivity()");
 
-	}
+        // TODO - Start the GoToDangerousActivity
+
+
+    }
 
 }
