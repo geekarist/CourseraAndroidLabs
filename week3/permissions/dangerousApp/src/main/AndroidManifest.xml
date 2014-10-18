@@ -24,7 +24,8 @@
             android:permission="course.labs.permissions.DANGEROUS_ACTIVITY_PERM">
 
             <intent-filter>
-                <action android:name="course.labs.permissions.DANGEROUS_ACTIVITY_PERM" />
+                <action android:name="course.labs.permissions.DANGEROUS_ACTIVITY" />
+                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
 
             <intent-filter>
