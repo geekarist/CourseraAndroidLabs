@@ -1,2 +1,2 @@
-include ':week3:permissions:dangerousApp'
-include ':week3:permissions:permissionsLab'
+
+include ':week3:fragments:fragmentsLab'
