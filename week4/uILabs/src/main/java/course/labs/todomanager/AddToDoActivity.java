@@ -97,15 +97,15 @@ public class AddToDoActivity extends Activity {
             }
         });
 
-        // TODO - Set up OnClickListener for the Reset Button
         final Button resetButton = (Button) findViewById(R.id.resetButton);
         resetButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 Log.i(TAG, "Entered resetButton.OnClickListener.onClick()");
-
-                // TODO - Reset data to default values
-
+                setDefaultDateTime();
+                mTitleText.setText("");
+                mDefaultStatusButton.setChecked(true);
+                mDefaultPriorityButton.setChecked(true);
             }
         });
 
