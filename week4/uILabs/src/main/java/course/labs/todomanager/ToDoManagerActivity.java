@@ -54,14 +54,13 @@ public class ToDoManagerActivity extends ListActivity {
 		}
         getListView().addFooterView(footerView);
 
-		
 		footerView.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 
 				Log.i(TAG,"Entered footerView.OnClickListener.onClick()");
+                startActivity(new Intent(getBaseContext(), AddToDoActivity.class));
 
-				//TODO - Implement OnClick().
 			}
 		});
 
