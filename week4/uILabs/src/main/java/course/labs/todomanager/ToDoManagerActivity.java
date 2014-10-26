@@ -21,174 +21,190 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.TextView;
+
 import course.labs.todomanager.ToDoItem.Priority;
 import course.labs.todomanager.ToDoItem.Status;
 
 public class ToDoManagerActivity extends ListActivity {
 
-	private static final int ADD_TODO_ITEM_REQUEST = 0;
-	private static final String FILE_NAME = "TodoManagerActivityData.txt";
-	private static final String TAG = "Lab-UserInterface";
+    private static final int ADD_TODO_ITEM_REQUEST = 0;
+    private static final String FILE_NAME = "TodoManagerActivityData.txt";
+    private static final String TAG = "Lab-UserInterface";
 
-	// IDs for menu items
-	private static final int MENU_DELETE = Menu.FIRST;
-	private static final int MENU_DUMP = Menu.FIRST + 1;
+    // IDs for menu items
+    private static final int MENU_DELETE = Menu.FIRST;
+    private static final int MENU_DUMP = Menu.FIRST + 1;
 
-	ToDoListAdapter mAdapter;
+    ToDoListAdapter mAdapter;
 
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
-		// Create a new TodoListAdapter for this ListActivity's ListView
-		mAdapter = new ToDoListAdapter(getApplicationContext());
+        // Create a new TodoListAdapter for this ListActivity's ListView
+        mAdapter = new ToDoListAdapter(getApplicationContext());
 
-		// Put divider between ToDoItems and FooterView
-		getListView().setFooterDividersEnabled(true);
+        // Put divider between ToDoItems and FooterView
+        getListView().setFooterDividersEnabled(true);
 
-		TextView footerView = (TextView) getLayoutInflater().inflate(R.layout.footer_view, null);
+        TextView footerView = (TextView) getLayoutInflater().inflate(R.layout.footer_view, null);
 
-		// NOTE: You can remove this block once you've implemented the assignment
-		if (null == footerView) {
-			return;
-		}
+        // NOTE: You can remove this block once you've implemented the assignment
+        if (null == footerView) {
+            return;
+        }
         getListView().addFooterView(footerView);
 
-		footerView.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
+        footerView.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
-				Log.i(TAG,"Entered footerView.OnClickListener.onClick()");
-                startActivity(new Intent(getBaseContext(), AddToDoActivity.class));
+                Log.i(TAG, "Entered footerView.OnClickListener.onClick()");
+                startActivityForResult(new Intent(getBaseContext(), AddToDoActivity.class), ADD_TODO_ITEM_REQUEST);
 
-			}
-		});
+            }
+        });
 
         setListAdapter(mAdapter);
-	}
+    }
 
-	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.i(TAG, "Entered onActivityResult()");
 
-		Log.i(TAG,"Entered onActivityResult()");
+        if (requestCode == ADD_TODO_ITEM_REQUEST && resultCode == RESULT_OK) {
+            Bundle extras = data.getExtras();
 
-		// TODO - Check result code and request code
-		// if user submitted a new ToDoItem
-		// Create a new ToDoItem from the data Intent
-		// and then add it to the adapter
+            String title = (String) extras.get(ToDoItem.TITLE);
+            Priority priority = Priority.valueOf((String) extras.get(ToDoItem.PRIORITY));
+            Status status = Status.valueOf((String) extras.get(ToDoItem.STATUS));
+            String dateStr = (String) extras.get(ToDoItem.DATE);
+            Date date = parsedFrom(dateStr);
 
-	}
+            mAdapter.add(new ToDoItem(title, priority, status, date));
+        }
+    }
 
-	// Do not modify below here
+    private Date parsedFrom(String dateStr) {
+        Date date;
+        try {
+            date = ToDoItem.FORMAT.parse(dateStr);
+        } catch (ParseException e) {
+            date = new Date();
+        }
+        return date;
+    }
 
-	@Override
-	public void onResume() {
-		super.onResume();
+    // Do not modify below here
 
-		// Load saved ToDoItems, if necessary
+    @Override
+    public void onResume() {
+        super.onResume();
 
-		if (mAdapter.getCount() == 0)
-			loadItems();
-	}
+        // Load saved ToDoItems, if necessary
 
-	@Override
-	protected void onPause() {
-		super.onPause();
+        if (mAdapter.getCount() == 0)
+            loadItems();
+    }
 
-		// Save ToDoItems
+    @Override
+    protected void onPause() {
+        super.onPause();
 
-		saveItems();
+        // Save ToDoItems
 
-	}
+        saveItems();
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		super.onCreateOptionsMenu(menu);
+    }
 
-		menu.add(Menu.NONE, MENU_DELETE, Menu.NONE, "Delete all");
-		menu.add(Menu.NONE, MENU_DUMP, Menu.NONE, "Dump to log");
-		return true;
-	}
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        super.onCreateOptionsMenu(menu);
 
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
-		case MENU_DELETE:
-			mAdapter.clear();
-			return true;
-		case MENU_DUMP:
-			dump();
-			return true;
-		default:
-			return super.onOptionsItemSelected(item);
-		}
-	}
+        menu.add(Menu.NONE, MENU_DELETE, Menu.NONE, "Delete all");
+        menu.add(Menu.NONE, MENU_DUMP, Menu.NONE, "Dump to log");
+        return true;
+    }
 
-	private void dump() {
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case MENU_DELETE:
+                mAdapter.clear();
+                return true;
+            case MENU_DUMP:
+                dump();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
 
-		for (int i = 0; i < mAdapter.getCount(); i++) {
-			String data = ((ToDoItem) mAdapter.getItem(i)).toLog();
-			Log.i(TAG,	"Item " + i + ": " + data.replace(ToDoItem.ITEM_SEP, ","));
-		}
+    private void dump() {
 
-	}
+        for (int i = 0; i < mAdapter.getCount(); i++) {
+            String data = ((ToDoItem) mAdapter.getItem(i)).toLog();
+            Log.i(TAG, "Item " + i + ": " + data.replace(ToDoItem.ITEM_SEP, ","));
+        }
 
-	// Load stored ToDoItems
-	private void loadItems() {
-		BufferedReader reader = null;
-		try {
-			FileInputStream fis = openFileInput(FILE_NAME);
-			reader = new BufferedReader(new InputStreamReader(fis));
+    }
 
-			String title;
-			String priority;
-			String status;
-			Date date;
+    // Load stored ToDoItems
+    private void loadItems() {
+        BufferedReader reader = null;
+        try {
+            FileInputStream fis = openFileInput(FILE_NAME);
+            reader = new BufferedReader(new InputStreamReader(fis));
 
-			while (null != (title = reader.readLine())) {
-				priority = reader.readLine();
-				status = reader.readLine();
-				date = ToDoItem.FORMAT.parse(reader.readLine());
-				mAdapter.add(new ToDoItem(title, Priority.valueOf(priority),
-						Status.valueOf(status), date));
-			}
+            String title;
+            String priority;
+            String status;
+            Date date;
 
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (ParseException e) {
-			e.printStackTrace();
-		} finally {
-			if (null != reader) {
-				try {
-					reader.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-		}
-	}
+            while (null != (title = reader.readLine())) {
+                priority = reader.readLine();
+                status = reader.readLine();
+                date = ToDoItem.FORMAT.parse(reader.readLine());
+                mAdapter.add(new ToDoItem(title, Priority.valueOf(priority),
+                        Status.valueOf(status), date));
+            }
 
-	// Save ToDoItems to file
-	private void saveItems() {
-		PrintWriter writer = null;
-		try {
-			FileOutputStream fos = openFileOutput(FILE_NAME, MODE_PRIVATE);
-			writer = new PrintWriter(new BufferedWriter(new OutputStreamWriter(
-					fos)));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        } finally {
+            if (null != reader) {
+                try {
+                    reader.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
 
-			for (int idx = 0; idx < mAdapter.getCount(); idx++) {
+    // Save ToDoItems to file
+    private void saveItems() {
+        PrintWriter writer = null;
+        try {
+            FileOutputStream fos = openFileOutput(FILE_NAME, MODE_PRIVATE);
+            writer = new PrintWriter(new BufferedWriter(new OutputStreamWriter(
+                    fos)));
 
-				writer.println(mAdapter.getItem(idx));
+            for (int idx = 0; idx < mAdapter.getCount(); idx++) {
 
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		} finally {
-			if (null != writer) {
-				writer.close();
-			}
-		}
-	}
+                writer.println(mAdapter.getItem(idx));
+
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (null != writer) {
+                writer.close();
+            }
+        }
+    }
 }

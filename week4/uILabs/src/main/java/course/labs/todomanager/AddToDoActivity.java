@@ -110,7 +110,6 @@ public class AddToDoActivity extends Activity {
         });
 
         // Set up OnClickListener for the Submit Button
-
         final Button submitButton = (Button) findViewById(R.id.submitButton);
         submitButton.setOnClickListener(new OnClickListener() {
             @Override
@@ -119,14 +118,36 @@ public class AddToDoActivity extends Activity {
 
                 // gather ToDoItem data
 
-                // TODO - Get the current Priority
-                Priority priority = null;
+                Priority priority;
+                int checkedPrioId = mPriorityRadioGroup.getCheckedRadioButtonId();
+                switch (checkedPrioId) {
+                    case R.id.highPriority:
+                        priority = Priority.HIGH;
+                        break;
+                    case R.id.medPriority:
+                        priority = Priority.MED;
+                        break;
+                    case R.id.lowPriority:
+                        priority = Priority.LOW;
+                        break;
+                    default:
+                        priority = null;
+                }
 
-                // TODO - Get the current Status
-                Status status = null;
+                Status status;
+                int checkedStatusId = mStatusRadioGroup.getCheckedRadioButtonId();
+                switch (checkedStatusId) {
+                    case R.id.statusDone:
+                        status = Status.DONE;
+                        break;
+                    case R.id.statusNotDone:
+                        status = Status.NOTDONE;
+                        break;
+                    default:
+                        status = null;
+                }
 
-                // TODO - Get the current ToDoItem Title
-                String titleString = null;
+                String titleString = mTitleText.getText().toString();
 
                 // Construct the Date string
                 String fullDate = dateString + " " + timeString;
@@ -136,8 +157,8 @@ public class AddToDoActivity extends Activity {
                 ToDoItem.packageIntent(data, titleString, priority, status,
                         fullDate);
 
-                // TODO - return data Intent and finish
-
+                setResult(RESULT_OK, data);
+                finish();
             }
         });
     }
