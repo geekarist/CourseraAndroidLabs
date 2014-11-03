@@ -1,3 +1,2 @@
-
-include ':week3:fragments:fragmentsLab'
+include ':week4:modernArtUserInterface'
 include ':week4:uILabs'
