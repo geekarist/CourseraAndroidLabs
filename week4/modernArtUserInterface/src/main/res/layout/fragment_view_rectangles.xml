@@ -2,21 +2,51 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
+    android:orientation="horizontal"
     tools:context=".ViewRectanglesActivity$PlaceholderFragment">
 
-    <View
-        android:id="@+id/rectangle1"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight=".5"
-        android:background="#0000ff" />
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_weight=".33"
+        android:layout_height="match_parent"
+        android:layout_width="0dp">
 
-    <View
-        android:id="@+id/rectangle2"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight=".5"
-        android:background="#ff0000" />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight=".5"
+            android:background="#5555bb" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight=".5"
+            android:background="#bb5555" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_weight=".66"
+        android:layout_height="match_parent"
+        android:layout_width="0dp">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight=".33"
+            android:background="#bb0000" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight=".33"
+            android:background="#dddddd" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight=".33"
+            android:background="#0000bb" />
+    </LinearLayout>
 
 </LinearLayout>
