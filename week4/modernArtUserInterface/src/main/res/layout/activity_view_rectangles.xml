@@ -16,12 +16,14 @@
             android:layout_width="0dp">
 
             <View
+                android:id="@+id/soft_rectangle_left_top"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight=".5"
                 android:background="#5555bb" />
 
             <View
+                android:id="@+id/soft_rectangle_left_bottom"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight=".5"
@@ -35,18 +37,21 @@
             android:layout_width="0dp">
 
             <View
+                android:id="@+id/heavy_rectangle_right_top"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight=".33"
                 android:background="#bb0000" />
 
             <View
+                android:id="@+id/heavy_rectangle_right_middle"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight=".33"
                 android:background="#dddddd" />
 
             <View
+                android:id="@+id/heavy_rectangle_right_bottom"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight=".33"
@@ -56,6 +61,7 @@
     </LinearLayout>
 
     <SeekBar
+        android:id="@+id/change_colors"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight=".1"/>
