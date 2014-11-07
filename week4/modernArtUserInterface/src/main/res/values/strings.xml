@@ -6,4 +6,8 @@
     <string name="action_settings">Settings</string>
     <string name="action_more_info">More Information</string>
 
+    <string name="visit_moma_yes">Yes</string>
+    <string name="visit_moma_no">No</string>
+    <string name="visit_moma_question">Inspired by the works of modern artists. Visit MOMA?</string>
+
 </resources>

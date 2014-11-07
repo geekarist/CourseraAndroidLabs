@@ -1,6 +1,10 @@
 package com.github.geekarist.modernartuserinterface;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.app.DialogFragment;
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -73,9 +77,32 @@ public class ViewRectanglesActivity extends Activity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         if (id == R.id.action_more_info) {
-            Toast.makeText(getBaseContext(), "More informations clicked", Toast.LENGTH_LONG).show();
+            showVisitMomaDialog();
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void showVisitMomaDialog() {
+        new DialogFragment() {
+            @Override
+            public Dialog onCreateDialog(Bundle savedInstanceState) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder.setMessage(R.string.visit_moma_question)
+                        .setPositiveButton(R.string.visit_moma_yes, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Toast.makeText(getBaseContext(), R.string.visit_moma_yes, Toast.LENGTH_LONG).show();
+                            }
+                        })
+                        .setNegativeButton(R.string.visit_moma_no, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Toast.makeText(getBaseContext(), R.string.visit_moma_no, Toast.LENGTH_LONG).show();
+                            }
+                        });
+                return builder.create();
+            }
+        }.show(getFragmentManager(), "ViewRectanglesActivity");
     }
 }
