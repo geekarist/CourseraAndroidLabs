@@ -1,6 +1,7 @@
 package com.github.geekarist.modernartuserinterface;
 
 import android.app.Activity;
+import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.Menu;
@@ -15,30 +16,46 @@ public class ViewRectanglesActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_rectangles);
+        setupChangeColorsSeekbar();
+    }
 
+    private void setupChangeColorsSeekbar() {
         SeekBar changeColors = (SeekBar) findViewById(R.id.change_colors);
-        final int leftTopRectOriginalColor = ((ColorDrawable) findViewById(R.id.soft_rectangle_left_top).getBackground()).getColor();
-        final int leftBottomRectOriginalColor = ((ColorDrawable) findViewById(R.id.soft_rectangle_left_bottom).getBackground()).getColor();
-        final int rightTopRectOriginalColor = ((ColorDrawable) findViewById(R.id.heavy_rectangle_right_top).getBackground()).getColor();
-        final int rightBottomRectOriginalColor = ((ColorDrawable) findViewById(R.id.heavy_rectangle_right_bottom).getBackground()).getColor();
+        changeColors.setMax(360);
+        final int leftTopRectOriginalColor = viewBackgroundColor(R.id.soft_rectangle_left_top);
+        final int leftBottomRectOriginalColor = viewBackgroundColor(R.id.soft_rectangle_left_bottom);
+        final int rightTopRectOriginalColor = viewBackgroundColor(R.id.heavy_rectangle_right_top);
+        final int rightBottomRectOriginalColor = viewBackgroundColor(R.id.heavy_rectangle_right_bottom);
 
-        changeColors.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                findViewById(R.id.soft_rectangle_left_top).setBackgroundColor(leftTopRectOriginalColor + progress);
-                findViewById(R.id.soft_rectangle_left_bottom).setBackgroundColor(leftBottomRectOriginalColor + progress);
-                findViewById(R.id.heavy_rectangle_right_top).setBackgroundColor(rightTopRectOriginalColor + progress);
-                findViewById(R.id.heavy_rectangle_right_bottom).setBackgroundColor(rightBottomRectOriginalColor + progress);
-            }
+        changeColors.setOnSeekBarChangeListener(
+                new SeekBar.OnSeekBarChangeListener() {
+                    @Override
+                    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                        findViewById(R.id.soft_rectangle_left_top).setBackgroundColor(shiftColor(leftTopRectOriginalColor, progress));
+                        findViewById(R.id.soft_rectangle_left_bottom).setBackgroundColor(shiftColor(leftBottomRectOriginalColor, progress));
+                        findViewById(R.id.heavy_rectangle_right_top).setBackgroundColor(shiftColor(rightTopRectOriginalColor, progress));
+                        findViewById(R.id.heavy_rectangle_right_bottom).setBackgroundColor(shiftColor(rightBottomRectOriginalColor, progress));
+                    }
 
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-            }
+                    @Override
+                    public void onStartTrackingTouch(SeekBar seekBar) {
+                    }
 
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-            }
-        });
+                    @Override
+                    public void onStopTrackingTouch(SeekBar seekBar) {
+                    }
+                });
+    }
+
+    private int shiftColor(int color, int offset) {
+        float[] hsv = new float[3];
+        Color.colorToHSV(color, hsv);
+        hsv[0] = (hsv[0] + offset) % 360;
+        return Color.HSVToColor(hsv);
+    }
+
+    private int viewBackgroundColor(int soft_rectangle_left_top) {
+        return ((ColorDrawable) findViewById(soft_rectangle_left_top).getBackground()).getColor();
     }
 
 
