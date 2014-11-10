@@ -5,13 +5,14 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.SeekBar;
-import android.widget.Toast;
 
 
 public class ViewRectanglesActivity extends Activity {
@@ -84,25 +85,31 @@ public class ViewRectanglesActivity extends Activity {
     }
 
     private void showVisitMomaDialog() {
-        new DialogFragment() {
-            @Override
-            public Dialog onCreateDialog(Bundle savedInstanceState) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                builder.setMessage(R.string.visit_moma_question)
-                        .setPositiveButton(R.string.visit_moma_yes, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                Toast.makeText(getBaseContext(), R.string.visit_moma_yes, Toast.LENGTH_LONG).show();
-                            }
-                        })
-                        .setNegativeButton(R.string.visit_moma_no, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                Toast.makeText(getBaseContext(), R.string.visit_moma_no, Toast.LENGTH_LONG).show();
-                            }
-                        });
-                return builder.create();
-            }
-        }.show(getFragmentManager(), "ViewRectanglesActivity");
+        new VisitMomaDialogFragment().show(getFragmentManager(), "ViewRectanglesActivity");
+    }
+
+    public static class VisitMomaDialogFragment extends DialogFragment {
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            builder.setMessage(R.string.visit_moma_question)
+                    .setPositiveButton(R.string.visit_moma_yes, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            visitMoma();
+                        }
+                    })
+                    .setNegativeButton(R.string.visit_moma_no, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dismiss();
+                        }
+                    });
+            return builder.create();
+        }
+
+        private void visitMoma() {
+            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.visit_moma_url))));
+        }
     }
 }

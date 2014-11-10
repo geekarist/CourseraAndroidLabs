@@ -9,5 +9,6 @@
     <string name="visit_moma_yes">Yes</string>
     <string name="visit_moma_no">No</string>
     <string name="visit_moma_question">Inspired by the works of modern artists. Visit MoMA?</string>
+    <string name="visit_moma_url">"http://www.moma.org"</string>
 
 </resources>
