@@ -1,2 +1,3 @@
 include ':week4:modernArtUserInterface'
 include ':week4:uILabs'
+include ':week5:notificationsLab'
