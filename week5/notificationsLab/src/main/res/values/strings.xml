@@ -12,5 +12,6 @@
     <string name="start_main_activity">Start Main Activity</string>
     <string name="make_tweets_old">Make Tweets Old</string>
     <string name="make_tweets_new">Make Tweets New</string>
+    <string name="downloading_tweets">Downloading Tweets from Network</string>
 
 </resources>
