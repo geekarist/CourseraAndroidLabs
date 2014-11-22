@@ -1,1 +1,2 @@
 include ':week5:notificationsLab'
+include ':week6:graphicsLab'
