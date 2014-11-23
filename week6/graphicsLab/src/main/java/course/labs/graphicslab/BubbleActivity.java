@@ -1,11 +1,5 @@
 package course.labs.graphicslab;
 
-import java.util.Random;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
-
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -23,6 +17,13 @@ import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import java.util.Random;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
+
+import static android.util.FloatMath.sqrt;
 import static java.lang.String.format;
 
 public class BubbleActivity extends Activity {
@@ -144,14 +145,35 @@ public class BubbleActivity extends Activity {
                         // ViewGroup.getChildCount() method
                         float x = event.getX();
                         float y = event.getY();
-                        Toast.makeText(getApplicationContext(),
-                                format("Creating bubble at (%.02f, %.02f)",
-                                        x, y), Toast.LENGTH_SHORT).show();
-                        BubbleView bubble = new BubbleView(getBaseContext(), x, y);
-                        mFrame.addView(bubble);
+
+                        BubbleView existingBubble;
+                        if (null != (existingBubble = bubbleIntersecting(x, y))) {
+                            Toast.makeText(getApplicationContext(),
+                                    format("Bubble exists at (%.02f, %.02f)",
+                                            x, y), Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(getApplicationContext(),
+                                    format("Creating bubble at (%.02f, %.02f)",
+                                            x, y), Toast.LENGTH_SHORT).show();
+                            BubbleView bubble = new BubbleView(getBaseContext(), x, y);
+                            mFrame.addView(bubble);
+                        }
                         return true;
                     }
                 });
+    }
+
+    private BubbleView bubbleIntersecting(float x, float y) {
+        for (int i = 0; i < mFrame.getChildCount(); i++) {
+            View childView = mFrame.getChildAt(i);
+            if (childView instanceof BubbleView) {
+                BubbleView bubbleChildView = (BubbleView) childView;
+                if (bubbleChildView.intersects(x, y)) {
+                    return bubbleChildView;
+                }
+            }
+        }
+        return null;
     }
 
     @Override
@@ -299,12 +321,11 @@ public class BubbleActivity extends Activity {
 
         // Returns true if the BubbleView intersects position (x,y)
         private synchronized boolean intersects(float x, float y) {
-
             // TODO - Return true if the BubbleView intersects position (x,y)
-
-
-            return true || false;
-
+            float dx = x - (mXPos + mRadius)    ;
+            float dy = y - (mYPos + mRadius);
+            float distance = sqrt(dx * dx + dy * dy);
+            return distance < mRadius;
         }
 
         // Cancel the Bubble's movement
