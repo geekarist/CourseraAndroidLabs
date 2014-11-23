@@ -15,7 +15,6 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
 
 import java.util.Random;
 import java.util.concurrent.Executors;
@@ -24,7 +23,6 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 import static android.util.FloatMath.sqrt;
-import static java.lang.String.format;
 
 public class BubbleActivity extends Activity {
 
@@ -148,13 +146,8 @@ public class BubbleActivity extends Activity {
 
                         BubbleView existingBubble;
                         if (null != (existingBubble = bubbleIntersecting(x, y))) {
-                            Toast.makeText(getApplicationContext(),
-                                    format("Bubble exists at (%.02f, %.02f)",
-                                            x, y), Toast.LENGTH_SHORT).show();
+                            mFrame.removeView(existingBubble);
                         } else {
-                            Toast.makeText(getApplicationContext(),
-                                    format("Creating bubble at (%.02f, %.02f)",
-                                            x, y), Toast.LENGTH_SHORT).show();
                             BubbleView bubble = new BubbleView(getBaseContext(), x, y);
                             mFrame.addView(bubble);
                         }
