@@ -9,12 +9,15 @@ import android.graphics.Paint;
 import android.media.AudioManager;
 import android.media.SoundPool;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import java.util.Random;
 import java.util.concurrent.Executors;
@@ -150,6 +153,7 @@ public class BubbleActivity extends Activity {
                         } else {
                             BubbleView bubble = new BubbleView(getBaseContext(), x, y);
                             mFrame.addView(bubble);
+                            bubble.startMovement();
                         }
                         return true;
                     }
@@ -300,14 +304,16 @@ public class BubbleActivity extends Activity {
             mMoverFuture = executor.scheduleWithFixedDelay(new Runnable() {
                 @Override
                 public void run() {
-
-                    // TODO - implement movement logic.
+                    // DONE - implement movement logic.
                     // Each time this method is run the BubbleView should
                     // move one step. If the BubbleView exits the display,
                     // stop the BubbleView's Worker Thread.
                     // Otherwise, request that the BubbleView be redrawn.
-
-
+                    if (moveWhileOnScreen()) {
+                        postInvalidate();
+                    } else {
+                        stopMovement(false);
+                    }
                 }
             }, 0, REFRESH_RATE, TimeUnit.MILLISECONDS);
         }
@@ -333,13 +339,14 @@ public class BubbleActivity extends Activity {
                     mMoverFuture.cancel(true);
                 }
 
+                final BubbleView bubbleView = this;
                 // This work will be performed on the UI Thread
                 mFrame.post(new Runnable() {
                     @Override
                     public void run() {
 
-                        // TODO - Remove the BubbleView from mFrame
-
+                        // DONE - Remove the BubbleView from mFrame
+                        mFrame.removeView(bubbleView);
 
                         // TODO - If the bubble was popped by user,
                         // play the popping sound
@@ -370,7 +377,7 @@ public class BubbleActivity extends Activity {
 
             // DONE Rotate the canvas by current rotation
             // Hint - Rotate around the bubble's center, not its position
-            canvas.rotate(mRotate, mXPos, mYPos);
+            canvas.rotate(mRotate, mXPos + mRadius, mYPos + mRadius);
 
             // DONE - draw the bitmap at it's new location
             canvas.drawBitmap(mScaledBitmap, mXPos, mYPos, mPainter);
@@ -383,24 +390,25 @@ public class BubbleActivity extends Activity {
         // Returns true if the BubbleView is still on the screen after the move
         // operation
         private synchronized boolean moveWhileOnScreen() {
+            // DONE - Move the BubbleView
+            mXPos += mDx;
+            mYPos += mDy;
 
-            // TODO - Move the BubbleView
-
-
-            return isOutOfView();
-
+            return isInsideView();
         }
 
         // Return true if the BubbleView is still on the screen after the move
         // operation
-        private boolean isOutOfView() {
-
-            // TODO - Return true if the BubbleView is still on the screen after
+        private boolean isInsideView() {
+            // DONE - Return true if the BubbleView is still on the screen after
             // the move operation
-
-
-            return true || false;
-
+            DisplayMetrics metrics = new DisplayMetrics();
+            mFrame.getDisplay().getMetrics(metrics);
+            float bubbleCenterX = mXPos + mRadius;
+            float bubbleCenterY = mYPos + mRadius;
+            boolean bubbleIsInsideHoriz = bubbleCenterX < metrics.widthPixels && bubbleCenterX > 0;
+            boolean bubbleIsInsideVert = bubbleCenterY < metrics.heightPixels && bubbleCenterY > 0;
+            return bubbleIsInsideHoriz && bubbleIsInsideVert;
         }
     }
 
