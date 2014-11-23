@@ -71,9 +71,6 @@ public class BubbleActivity extends Activity {
 
         // Load basic bubble Bitmap
         mBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.b64);
-
-        setupGestureDetector();
-
     }
 
     @Override
@@ -89,16 +86,20 @@ public class BubbleActivity extends Activity {
                 .getStreamVolume(AudioManager.STREAM_MUSIC)
                 / mAudioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
 
-        // TODO - make a new SoundPool, allowing up to 10 streams
-        mSoundPool = null;
+        // DONE - make a new SoundPool, allowing up to 10 streams
+        mSoundPool = new SoundPool(10, AudioManager.STREAM_MUSIC, 0);
 
-        // TODO - set a SoundPool OnLoadCompletedListener that calls
+        // DONE - set a SoundPool OnLoadCompletedListener that calls
         // setupGestureDetector()
+        mSoundPool.setOnLoadCompleteListener(new SoundPool.OnLoadCompleteListener() {
+            @Override
+            public void onLoadComplete(SoundPool soundPool, int sampleId, int status) {
+                setupGestureDetector();
+            }
+        });
 
-
-        // TODO - load the sound from res/raw/bubble_pop.wav
-
-
+        // DONE - load the sound from res/raw/bubble_pop.wav
+        mSoundID = mSoundPool.load(this, R.raw.bubble_pop, 1);
     }
 
     @Override
@@ -149,7 +150,7 @@ public class BubbleActivity extends Activity {
 
                         BubbleView existingBubble;
                         if (null != (existingBubble = getBubbleIntersecting(x, y))) {
-                            mFrame.removeView(existingBubble);
+                            existingBubble.stopMovement(true);
                         } else {
                             BubbleView bubble = new BubbleView(getBaseContext(), x, y);
                             mFrame.addView(bubble);
@@ -185,8 +186,9 @@ public class BubbleActivity extends Activity {
     @Override
     protected void onPause() {
 
-        // TODO - Release all SoundPool resources
-
+        // DONE - Release all SoundPool resources
+        mSoundPool.release();
+        mSoundPool = null;
 
         super.onPause();
     }
@@ -348,11 +350,10 @@ public class BubbleActivity extends Activity {
                         // DONE - Remove the BubbleView from mFrame
                         mFrame.removeView(bubbleView);
 
-                        // TODO - If the bubble was popped by user,
+                        // DONE - If the bubble was popped by user,
                         // play the popping sound
                         if (wasPopped) {
-
-
+                            mSoundPool.play(mSoundID, mStreamVolume, mStreamVolume, 0, 0, 1);
                         }
                     }
                 });
