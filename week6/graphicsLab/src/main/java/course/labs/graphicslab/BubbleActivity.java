@@ -138,14 +138,14 @@ public class BubbleActivity extends Activity {
 
                     @Override
                     public boolean onSingleTapConfirmed(MotionEvent event) {
-                        // TODO - Implement onSingleTapConfirmed actions.
+                        // DONE - Implement onSingleTapConfirmed actions.
                         // You can get all Views in mFrame using the
                         // ViewGroup.getChildCount() method
                         float x = event.getX();
                         float y = event.getY();
 
                         BubbleView existingBubble;
-                        if (null != (existingBubble = bubbleIntersecting(x, y))) {
+                        if (null != (existingBubble = getBubbleIntersecting(x, y))) {
                             mFrame.removeView(existingBubble);
                         } else {
                             BubbleView bubble = new BubbleView(getBaseContext(), x, y);
@@ -156,7 +156,7 @@ public class BubbleActivity extends Activity {
                 });
     }
 
-    private BubbleView bubbleIntersecting(float x, float y) {
+    private BubbleView getBubbleIntersecting(float x, float y) {
         for (int i = 0; i < mFrame.getChildCount(); i++) {
             View childView = mFrame.getChildAt(i);
             if (childView instanceof BubbleView) {
@@ -172,7 +172,7 @@ public class BubbleActivity extends Activity {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
 
-        // TODO - Delegate the touch to the gestureDetector
+        // DONE - Delegate the touch to the gestureDetector
 
         return mGestureDetector.onTouchEvent(event);
 
@@ -235,7 +235,7 @@ public class BubbleActivity extends Activity {
         private void setRotation(Random r) {
             if (speedMode == RANDOM) {
 
-                // TODO - set rotation in range [1..3]
+                // DONE - set rotation in range [1..3]
                 mDRotate = 1 + r.nextInt(3);
 
             } else {
@@ -263,7 +263,7 @@ public class BubbleActivity extends Activity {
 
                 default:
 
-                    // TODO - Set mDx and mDy to indicate movement direction and speed
+                    // DONE - Set mDx and mDy to indicate movement direction and speed
                     // Limit speed in the x and y direction to [-3..3] pixels per movement.
                     mDx = r.nextInt(7) - 3;
                     mDy = r.nextInt(7) - 3;
@@ -277,12 +277,12 @@ public class BubbleActivity extends Activity {
                 mScaledBitmapWidth = BITMAP_SIZE * 3;
             } else {
 
-                // TODO - set scaled bitmap size in range [1..3] * BITMAP_SIZE
+                // DONE - set scaled bitmap size in range [1..3] * BITMAP_SIZE
                 mScaledBitmapWidth = (r.nextInt(3) + 1) * BITMAP_SIZE;
 
             }
 
-            // TODO - create the scaled bitmap using size set above
+            // DONE - create the scaled bitmap using size set above
             mScaledBitmap = Bitmap.createScaledBitmap(mBitmap, mScaledBitmapWidth, mScaledBitmapWidth, false);
 
         }
@@ -314,7 +314,7 @@ public class BubbleActivity extends Activity {
 
         // Returns true if the BubbleView intersects position (x,y)
         private synchronized boolean intersects(float x, float y) {
-            // TODO - Return true if the BubbleView intersects position (x,y)
+            // DONE - Return true if the BubbleView intersects position (x,y)
             float dx = x - (mXPos + mRadius)    ;
             float dy = y - (mYPos + mRadius);
             float distance = sqrt(dx * dx + dy * dy);
@@ -362,20 +362,20 @@ public class BubbleActivity extends Activity {
         @Override
         protected synchronized void onDraw(Canvas canvas) {
 
-            // TODO - save the canvas
+            // DONE - save the canvas
             canvas.save();
 
-            // TODO - increase the rotation of the original image by mDRotate
+            // DONE - increase the rotation of the original image by mDRotate
             mRotate += mDRotate;
 
-            // TODO Rotate the canvas by current rotation
+            // DONE Rotate the canvas by current rotation
             // Hint - Rotate around the bubble's center, not its position
             canvas.rotate(mRotate, mXPos, mYPos);
 
-            // TODO - draw the bitmap at it's new location
+            // DONE - draw the bitmap at it's new location
             canvas.drawBitmap(mScaledBitmap, mXPos, mYPos, mPainter);
 
-            // TODO - restore the canvas
+            // DONE - restore the canvas
             canvas.restore();
 
         }
