@@ -5,6 +5,7 @@ import android.content.Context;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.location.LocationProvider;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -13,7 +14,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ListView;
-import android.widget.Toast;
 
 public class PlaceViewActivity extends ListActivity implements LocationListener {
 	private static final long FIVE_MINS = 5 * 60 * 1000;
@@ -44,12 +44,13 @@ public class PlaceViewActivity extends ListActivity implements LocationListener 
 		// so it has its own ListView. ListView's adapter should be a PlaceViewAdapter
 
 		mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-		ListView placesListView = getListView();
+		final ListView placesListView = getListView();
 
 		// TODO - add a footerView to the ListView
 		// You can use footer_view.xml to define the footer
 
-		View footerView = null;
+		View footerView = getLayoutInflater().inflate(R.layout.footer_view, null);
+        placesListView.addFooterView(footerView);
 
 		// TODO - footerView must respond to user clicks, handling 3 cases:
 
@@ -67,13 +68,14 @@ public class PlaceViewActivity extends ListActivity implements LocationListener 
 		// a PlaceBadge. In this case download the information needed to make a new
 		// PlaceBadge.
 
+        final PlaceViewActivity thisActivity = this;
 		footerView.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View arg0) {
 				Log.i(TAG, "Entered footerView.OnClickListener.onClick()");
 
-
+                new PlaceDownloaderTask(thisActivity, false).execute(mLastLocationReading);
 				
 				
 				
@@ -108,27 +110,19 @@ public class PlaceViewActivity extends ListActivity implements LocationListener 
 
 		// TODO - Check NETWORK_PROVIDER for an existing location reading.
 		// Only keep this last reading if it is fresh - less than 5 minutes old
-
-		
-		
-		
-		mLastLocationReading = null;
+        mLastLocationReading = mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
 		
 
 		// TODO - register to receive location updates from NETWORK_PROVIDER
-
-
-		
-		
+        mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, mMinTime, mMinDistance, this);
 	}
 
 	@Override
 	protected void onPause() {
 
 		// TODO - unregister for location updates
+        mLocationManager.removeUpdates(this);
 
-
-		
 		
 		shutdownMockLocationManager();
 		super.onPause();
