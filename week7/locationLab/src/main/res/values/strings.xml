@@ -17,5 +17,8 @@
     <string name="the_greenhouse_string">The Greenhouse</string>
     <string name="berwyn_string">Berwyn</string>
     <string name="duplicate_location_string">You already have this location badge</string>
+    <string name="wait_for_location">Please wait for your location to be found</string>
+    <string name="badge_acquisition_impossible">PlaceBadge could not be acquired</string>
+    <string name="no_country_at_location">There is no country at this location</string>
 
 </resources>
