@@ -1,1 +1,2 @@
-include ':week7:locationLab'
+include ':week8:contentProviderLabUser'
+include ':week8:contentProviderLabContentProvider'

@@ -53,6 +53,11 @@ public class PlaceViewActivity extends ListActivity implements LocationListener 
         View footerView = getLayoutInflater().inflate(R.layout.footer_view, null);
         placesListView.addFooterView(footerView);
 
+		// Can be removed after implementing the TODO above
+		if (null == footerView ) {
+			return;
+		}
+
         // TODO - footerView must respond to user clicks, handling 3 cases:
 
         // There is no current location - response is up to you. One good
