@@ -56,13 +56,13 @@ public class PlaceViewActivity extends ListActivity implements
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		if (!Environment.getExternalStorageState().equals(
-				Environment.MEDIA_MOUNTED)) {
-			Toast.makeText(getApplicationContext(),
-					"External Storage is not available.", Toast.LENGTH_LONG)
-					.show();
-			finish();
-		}
+//		if (!Environment.getExternalStorageState().equals(
+//				Environment.MEDIA_MOUNTED)) {
+//			Toast.makeText(getApplicationContext(),
+//					"External Storage is not available.", Toast.LENGTH_LONG)
+//					.show();
+//			finish();
+//		}
 
 		mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         final ListView placesListView = getListView();
