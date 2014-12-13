@@ -1,5 +1,19 @@
 package course.labs.contentproviderlab;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.location.Location;
+import android.location.LocationManager;
+import android.os.AsyncTask;
+import android.util.Log;
+
+import org.w3c.dom.DOMException;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -15,24 +29,10 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.w3c.dom.DOMException;
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.location.Location;
-import android.location.LocationManager;
-import android.os.AsyncTask;
-import android.util.Log;
-
 public class PlaceDownloaderTask extends AsyncTask<Location, Void, PlaceRecord> {
 
 	// False if you don't have network access
-	private boolean mHasNetwork = false;
+	private boolean mHasNetwork = true;
 
 	// Log TAG
 	private static final String TAG = "PlaceDownloaderTask";

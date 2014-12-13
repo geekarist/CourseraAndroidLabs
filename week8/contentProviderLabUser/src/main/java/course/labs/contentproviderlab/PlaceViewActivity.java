@@ -18,6 +18,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.CursorAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -57,13 +58,13 @@ public class PlaceViewActivity extends ListActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-//		if (!Environment.getExternalStorageState().equals(
-//				Environment.MEDIA_MOUNTED)) {
-//			Toast.makeText(getApplicationContext(),
-//					"External Storage is not available.", Toast.LENGTH_LONG)
-//					.show();
-//			finish();
-//		}
+		if (!Environment.getExternalStorageState().equals(
+				Environment.MEDIA_MOUNTED)) {
+			Toast.makeText(getApplicationContext(),
+					"External Storage is not available.", Toast.LENGTH_LONG)
+					.show();
+			finish();
+		}
 
         mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         final ListView placesListView = getListView();
@@ -120,11 +121,14 @@ public class PlaceViewActivity extends ListActivity implements
 
         placesListView.addFooterView(footerView);
 
-        mCursorAdapter = new PlaceViewAdapter(getApplicationContext(), null, 0);
-        setListAdapter(mCursorAdapter);
+//        Cursor cursor = getContentResolver().query(PlaceBadgesContract.CONTENT_URI, null, null, null, null);
+
+        mCursorAdapter = new PlaceViewAdapter(this, null, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
+        getListView().setAdapter(mCursorAdapter);
 
         // TODO - Initialize the loader
-        getLoaderManager().initLoader(0, null, this);
+        getLoaderManager().initLoader(0, null, PlaceViewActivity.this);
+
     }
 
     @Override
@@ -241,10 +245,12 @@ public class PlaceViewActivity extends ListActivity implements
         CursorLoader cursorLoader = new CursorLoader(
                 this, PlaceBadgesContract.CONTENT_URI,
                 new String[]{
+                        PlaceBadgesContract._ID,
                         PlaceBadgesContract.COUNTRY_NAME, PlaceBadgesContract.FLAG_BITMAP_PATH,
                         PlaceBadgesContract.LAT, PlaceBadgesContract.LON, PlaceBadgesContract.PLACE_NAME},
                 null, null, null
         );
+        Log.i(TAG, "Cursor Loader: " + cursorLoader.toString());
         return cursorLoader;
     }
 

@@ -1,12 +1,5 @@
 package course.labs.contentproviderlab;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -22,6 +15,13 @@ import android.view.ViewGroup;
 import android.widget.CursorAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
 
 import course.labs.contentproviderlab.provider.PlaceBadgesContract;
 
@@ -57,6 +57,7 @@ public class PlaceViewAdapter extends CursorAdapter {
 
     @Override
     public Cursor swapCursor(Cursor newCursor) {
+        super.swapCursor(newCursor);
 
         // TODO - clear the ArrayList list so it contains
         // the current set of PlaceRecords. Use the
@@ -64,9 +65,11 @@ public class PlaceViewAdapter extends CursorAdapter {
         // cursor's places to the list
         mPlaceRecords.clear();
 
-        while (newCursor.moveToNext()) {
-            PlaceRecord placeRecordFromCursor = getPlaceRecordFromCursor(newCursor);
-            mPlaceRecords.add(placeRecordFromCursor);
+        if (null != newCursor) {
+            while (newCursor.moveToNext()) {
+                PlaceRecord placeRecordFromCursor = getPlaceRecordFromCursor(newCursor);
+                mPlaceRecords.add(placeRecordFromCursor);
+            }
         }
 
         // FIXME
