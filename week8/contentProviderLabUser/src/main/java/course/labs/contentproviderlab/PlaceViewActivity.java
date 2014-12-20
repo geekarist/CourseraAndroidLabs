@@ -141,7 +141,7 @@ public class PlaceViewActivity extends ListActivity implements
         // Only keep this last reading if it is fresh - less than 5 minutes old
         mLastLocationReading = mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
         boolean locationReadingIsFresh = mLastLocationReading != null && timeInMillis() - mLastLocationReading.getTime() > FIVE_MINS;
-        if (locationReadingIsFresh) {
+        if (!locationReadingIsFresh) {
             mLastLocationReading = null;
         }
 
@@ -274,11 +274,6 @@ public class PlaceViewActivity extends ListActivity implements
         // TODO - swap in a null Cursor
         mCursorAdapter.swapCursor(null);
 
-    }
-
-    // Returns age of location in milliseconds
-    private long ageInMilliseconds(Location location) {
-        return System.currentTimeMillis() - location.getTime();
     }
 
     @Override
