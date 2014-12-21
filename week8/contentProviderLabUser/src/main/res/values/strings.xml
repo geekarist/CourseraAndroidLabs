@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">ContentProviderLabProvider</string>
+    <string name="app_name">ContentProviderLabUser</string>
     <string name="footer_text">Get New Place</string>
     <string name="delete">Delete</string>
     <string name="print">Print</string>
