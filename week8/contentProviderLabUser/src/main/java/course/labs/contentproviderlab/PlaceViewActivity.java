@@ -140,7 +140,7 @@ public class PlaceViewActivity extends ListActivity implements
         // TODO - Check NETWORK_PROVIDER for an existing location reading.
         // Only keep this last reading if it is fresh - less than 5 minutes old
         mLastLocationReading = mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-        boolean locationReadingIsFresh = mLastLocationReading != null && timeInMillis() - mLastLocationReading.getTime() > FIVE_MINS;
+        boolean locationReadingIsFresh = mLastLocationReading != null && timeInMillis() - mLastLocationReading.getTime() < FIVE_MINS;
         if (!locationReadingIsFresh) {
             mLastLocationReading = null;
         }
