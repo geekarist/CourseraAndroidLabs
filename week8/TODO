@@ -1,8 +1,9 @@
 - Fix content provider / location bug, to reproduce:
-    1. Force stop, clear data and uninstall content provider and user app
+    1. Force stop and clear data of content provider and user app
     2. Install content provider and user app
     3. Launch user app
     4. Click 'place one' and get new place
     5. Click 'place no country' and get new place
-    6. Click 'place one' and get new place. Should have message 'already have this location badge'
-    but had 'no country at this location'
+    6. Click 'place one' and get new place. BUG: should have message 'already have this location badge'
+    but had 'no country at this location'. Does not always happen.
+    7. Repeat steps 5 and 6 until the bug happens
