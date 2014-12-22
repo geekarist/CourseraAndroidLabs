@@ -1,4 +1,4 @@
-package geekarist.github.com.dailyselfie;
+package com.github.geekarist.dailyselfie;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;

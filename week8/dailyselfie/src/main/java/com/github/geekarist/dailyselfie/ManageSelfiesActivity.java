@@ -1,4 +1,4 @@
-package geekarist.github.com.dailyselfie;
+package com.github.geekarist.dailyselfie;
 
 import android.app.Activity;
 import android.os.Bundle;
