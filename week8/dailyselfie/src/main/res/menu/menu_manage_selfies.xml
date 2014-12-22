@@ -1,0 +1,18 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".ManageSelfiesActivity">
+
+    <item
+        android:id="@+id/action_take_picture"
+        android:title="@string/take_picture"
+        android:orderInCategory="90"
+        android:showAsAction="ifRoom"
+        android:icon="@drawable/ic_action_photo" />
+
+    <item
+        android:id="@+id/action_settings"
+        android:title="@string/action_settings"
+        android:orderInCategory="100"
+        android:showAsAction="never" />
+
+</menu>
