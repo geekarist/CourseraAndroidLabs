@@ -5,5 +5,7 @@
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
     <string name="take_picture">Take Picture</string>
+    <string name="error_taking_picture">An error occured while taking picture, please try again</string>
+    <string name="picture_taken">Picture has been taken: %s</string>
 
 </resources>
