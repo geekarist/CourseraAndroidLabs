@@ -1,6 +1,7 @@
 package com.github.geekarist.dailyselfie;
 
 import android.app.Activity;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -59,6 +60,7 @@ public class ManageSelfiesActivity extends Activity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             Toast.makeText(this, getString(R.string.picture_taken, mCurrentPhotoPath), Toast.LENGTH_SHORT).show();
+            galleryAddPic();
         }
     }
 
@@ -95,4 +97,16 @@ public class ManageSelfiesActivity extends Activity {
 
         return null;
     }
+
+    private void galleryAddPic() {
+        Uri uri = Uri.fromFile(new File(mCurrentPhotoPath));
+        Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, uri);
+        this.sendBroadcast(mediaScanIntent);
+        ContentValues values = new ContentValues();
+        values.put(MediaStore.Images.Media.DISPLAY_NAME, uri.getPath());
+        values.put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg");
+        values.put(MediaStore.Images.Media.DATA, uri.getPath());
+        getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+    }
+
 }
