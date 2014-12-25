@@ -1,7 +1,6 @@
 package com.github.geekarist.dailyselfie;
 
 import android.app.Activity;
-import android.content.ContentValues;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -13,6 +12,7 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -81,16 +81,12 @@ public class ManageSelfiesActivity extends Activity {
     private File createImageFile() throws IOException {
         // Create an image file name
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName = "JPEG_" + timeStamp + "_";
+        String imageFileName = "JPEG_" + timeStamp;
         File storageDir = Environment.getExternalStoragePublicDirectory(
                 Environment.DIRECTORY_PICTURES);
 
         if (storageDir.mkdirs() || storageDir.isDirectory()) {
-            File image = File.createTempFile(
-                    imageFileName,  /* prefix */
-                    ".jpg",         /* suffix */
-                    storageDir      /* directory */
-            );
+            File image = File.createTempFile(imageFileName, ".jpg", storageDir);
             mCurrentPhotoPath = "file:" + image.getAbsolutePath();
             return image;
         }
@@ -100,13 +96,13 @@ public class ManageSelfiesActivity extends Activity {
 
     private void galleryAddPic() {
         Uri uri = Uri.fromFile(new File(mCurrentPhotoPath));
-        Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, uri);
-        this.sendBroadcast(mediaScanIntent);
-        ContentValues values = new ContentValues();
-        values.put(MediaStore.Images.Media.DISPLAY_NAME, uri.getPath());
-        values.put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg");
-        values.put(MediaStore.Images.Media.DATA, uri.getPath());
-        getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+        String imagePath = uri.getPath().replaceAll("^/file:", "");
+        try {
+            MediaStore.Images.Media.insertImage(getContentResolver(), imagePath, uri.getLastPathSegment(), "");
+            Log.d(TAG, getString(R.string.image_content_inserted, imagePath));
+        } catch (FileNotFoundException e) {
+            Log.e(TAG, getString(R.string.error_inserting_image, imagePath), e);
+        }
     }
 
 }
