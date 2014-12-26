@@ -1,7 +1,8 @@
 package com.github.geekarist.dailyselfie;
 
-import android.app.Activity;
+import android.app.ListActivity;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -9,6 +10,10 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ListAdapter;
+import android.widget.ListView;
+import android.widget.SimpleCursorAdapter;
 import android.widget.Toast;
 
 import java.io.File;
@@ -17,8 +22,10 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import static android.widget.Toast.LENGTH_LONG;
 
-public class ManageSelfiesActivity extends Activity {
+
+public class ManageSelfiesActivity extends ListActivity {
 
     private static final int REQUEST_IMAGE_CAPTURE = 1;
     private static final String TAG = ManageSelfiesActivity.class.getSimpleName();
@@ -29,8 +36,24 @@ public class ManageSelfiesActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_manage_selfies);
+
+        Cursor mCursor = MediaStore.Images.Media.query(getContentResolver(), MediaStore.Images.Media.EXTERNAL_CONTENT_URI, null);
+        startManagingCursor(mCursor);
+
+        ListAdapter adapter = new SimpleCursorAdapter(this, R.layout.two_line_list_item, mCursor,
+                new String[]{MediaStore.Images.ImageColumns.DISPLAY_NAME, MediaStore.Images.ImageColumns.DATA},
+                new int[]{R.id.text1, R.id.text2});
+
+        setListAdapter(adapter);
     }
 
+    @Override
+    protected void onListItemClick(ListView l, View v, int position, long id) {
+        Cursor item = (Cursor) l.getItemAtPosition(position);
+        String imgDisplayName = item.getString(item.getColumnIndex(MediaStore.Images.ImageColumns.DISPLAY_NAME));
+        String imgPath = item.getString(item.getColumnIndex(MediaStore.Images.ImageColumns.DATA));
+        Toast.makeText(this, imgPath, LENGTH_LONG).show();
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -72,7 +95,7 @@ public class ManageSelfiesActivity extends Activity {
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(pictureFile));
                 startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
             } catch (IOException e) {
-                Toast.makeText(this, R.string.error_taking_picture, Toast.LENGTH_LONG).show();
+                Toast.makeText(this, R.string.error_taking_picture, LENGTH_LONG).show();
                 Log.e(TAG, getString(R.string.error_taking_picture), e);
             }
         }
