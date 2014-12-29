@@ -23,6 +23,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import static android.widget.Toast.LENGTH_LONG;
+import static java.lang.String.format;
 
 
 public class ManageSelfiesActivity extends ListActivity {
@@ -38,8 +39,11 @@ public class ManageSelfiesActivity extends ListActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_manage_selfies);
 
-        // TODO Use something like http://stackoverflow.com/a/12329651/1665730
-        Cursor mCursor = MediaStore.Images.Media.query(getContentResolver(), MediaStore.Images.Media.EXTERNAL_CONTENT_URI, null);
+        // See http://stackoverflow.com/a/12329651/1665730
+        Cursor mCursor = getContentResolver().query(
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI, null,
+                format("%s LIKE ?", MediaStore.Audio.Media.DATA),
+                new String[]{"%DailySelfie%"}, MediaStore.MediaColumns.DATE_MODIFIED);
         startManagingCursor(mCursor);
 
         ListAdapter adapter = new SimpleCursorAdapter(this, R.layout.two_line_list_item, mCursor,
@@ -106,13 +110,10 @@ public class ManageSelfiesActivity extends ListActivity {
         // Create an image file name
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String imageFileName = "JPEG_" + timeStamp;
-        // TODO Use STORAGE_DIR
-        File storageDir = Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_PICTURES);
 
-        if (storageDir.mkdirs() || storageDir.isDirectory()) {
-            File image = File.createTempFile(imageFileName, ".jpg", storageDir);
-            mCurrentPhotoPath = "file:" + image.getAbsolutePath();
+        if (STORAGE_DIR.mkdirs() || STORAGE_DIR.isDirectory()) {
+            File image = File.createTempFile(imageFileName, ".jpg", STORAGE_DIR);
+            mCurrentPhotoPath = image.getAbsolutePath();
             return image;
         }
 
@@ -120,7 +121,13 @@ public class ManageSelfiesActivity extends ListActivity {
     }
 
     private void galleryAddPic() {
-        // TODO Use http://developer.android.com/training/camera/photobasics.html#TaskGallery
+        File f = new File(mCurrentPhotoPath);
+        Uri contentUri = Uri.fromFile(f);
+        Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, contentUri);
+        sendBroadcast(mediaScanIntent);
+    }
+
+    private void galleryAddPic2() {
         Uri uri = Uri.fromFile(new File(mCurrentPhotoPath));
         String imagePath = uri.getPath().replaceAll("^/file:", "");
         try {
