@@ -27,9 +27,10 @@ import static android.widget.Toast.LENGTH_LONG;
 
 public class ManageSelfiesActivity extends ListActivity {
 
+    public static final File STORAGE_DIR = new File(
+            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM), "DailySelfie");
     private static final int REQUEST_IMAGE_CAPTURE = 1;
     private static final String TAG = ManageSelfiesActivity.class.getSimpleName();
-
     private String mCurrentPhotoPath;
 
     @Override
@@ -37,13 +38,13 @@ public class ManageSelfiesActivity extends ListActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_manage_selfies);
 
+        // TODO Use something like http://stackoverflow.com/a/12329651/1665730
         Cursor mCursor = MediaStore.Images.Media.query(getContentResolver(), MediaStore.Images.Media.EXTERNAL_CONTENT_URI, null);
         startManagingCursor(mCursor);
 
         ListAdapter adapter = new SimpleCursorAdapter(this, R.layout.two_line_list_item, mCursor,
                 new String[]{MediaStore.Images.ImageColumns.DISPLAY_NAME, MediaStore.Images.ImageColumns.DATA},
                 new int[]{R.id.text1, R.id.text2});
-
         setListAdapter(adapter);
     }
 
@@ -105,6 +106,7 @@ public class ManageSelfiesActivity extends ListActivity {
         // Create an image file name
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String imageFileName = "JPEG_" + timeStamp;
+        // TODO Use STORAGE_DIR
         File storageDir = Environment.getExternalStoragePublicDirectory(
                 Environment.DIRECTORY_PICTURES);
 
@@ -118,6 +120,7 @@ public class ManageSelfiesActivity extends ListActivity {
     }
 
     private void galleryAddPic() {
+        // TODO Use http://developer.android.com/training/camera/photobasics.html#TaskGallery
         Uri uri = Uri.fromFile(new File(mCurrentPhotoPath));
         String imagePath = uri.getPath().replaceAll("^/file:", "");
         try {
