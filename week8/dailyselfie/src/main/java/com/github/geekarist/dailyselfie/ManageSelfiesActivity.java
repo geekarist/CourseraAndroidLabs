@@ -17,7 +17,6 @@ import android.widget.SimpleCursorAdapter;
 import android.widget.Toast;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -56,7 +55,10 @@ public class ManageSelfiesActivity extends ListActivity {
     protected void onListItemClick(ListView l, View v, int position, long id) {
         Cursor item = (Cursor) l.getItemAtPosition(position);
         String imgPath = item.getString(item.getColumnIndex(MediaStore.Images.ImageColumns.DATA));
-        Toast.makeText(this, imgPath, LENGTH_LONG).show();
+        Intent imgViewIntent = new Intent();
+        imgViewIntent.setAction(Intent.ACTION_VIEW);
+        imgViewIntent.setDataAndType(Uri.fromFile(new File(imgPath)), "image/jpeg");
+        startActivity(imgViewIntent);
     }
 
     @Override
