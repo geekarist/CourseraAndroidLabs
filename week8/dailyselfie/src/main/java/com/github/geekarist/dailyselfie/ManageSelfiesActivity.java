@@ -55,7 +55,6 @@ public class ManageSelfiesActivity extends ListActivity {
     @Override
     protected void onListItemClick(ListView l, View v, int position, long id) {
         Cursor item = (Cursor) l.getItemAtPosition(position);
-        String imgDisplayName = item.getString(item.getColumnIndex(MediaStore.Images.ImageColumns.DISPLAY_NAME));
         String imgPath = item.getString(item.getColumnIndex(MediaStore.Images.ImageColumns.DATA));
         Toast.makeText(this, imgPath, LENGTH_LONG).show();
     }
@@ -87,7 +86,6 @@ public class ManageSelfiesActivity extends ListActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-            Toast.makeText(this, getString(R.string.picture_taken, mCurrentPhotoPath), Toast.LENGTH_SHORT).show();
             galleryAddPic();
         }
     }
