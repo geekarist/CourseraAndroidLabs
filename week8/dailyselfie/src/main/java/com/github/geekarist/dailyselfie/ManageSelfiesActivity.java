@@ -127,15 +127,4 @@ public class ManageSelfiesActivity extends ListActivity {
         sendBroadcast(mediaScanIntent);
     }
 
-    private void galleryAddPic2() {
-        Uri uri = Uri.fromFile(new File(mCurrentPhotoPath));
-        String imagePath = uri.getPath().replaceAll("^/file:", "");
-        try {
-            MediaStore.Images.Media.insertImage(getContentResolver(), imagePath, uri.getLastPathSegment(), "");
-            Log.d(TAG, getString(R.string.image_content_inserted, imagePath));
-        } catch (FileNotFoundException e) {
-            Log.e(TAG, getString(R.string.error_inserting_image, imagePath), e);
-        }
-    }
-
 }
