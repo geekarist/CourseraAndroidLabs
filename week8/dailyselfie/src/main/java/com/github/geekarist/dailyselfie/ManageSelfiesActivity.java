@@ -48,8 +48,15 @@ public class ManageSelfiesActivity extends ListActivity {
         ListAdapter adapter = new SimpleCursorAdapter(this, R.layout.two_line_list_item, mCursor,
                 new String[]{MediaStore.Images.ImageColumns.DISPLAY_NAME, MediaStore.Images.ImageColumns.DATA},
                 new int[]{R.id.text1, R.id.text2});
+
         setListAdapter(adapter);
     }
+
+    // TODO: load scaled down bitmap into image view for each picture.
+    // See http://developer.android.com/training/displaying-bitmaps/load-bitmap.html#load-bitmap
+
+    // TODO: display bitmap using a subclass of SimpleCursorAdapter
+    // See http://stackoverflow.com/a/460927/1665730
 
     @Override
     protected void onListItemClick(ListView l, View v, int position, long id) {
