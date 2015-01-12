@@ -95,6 +95,22 @@ public class ManageSelfiesActivity extends ListActivity {
         setListAdapter(adapter);
     }
 
+    // TODO: Disable periodic notification on resume
+    // https://developer.android.com/training/scheduling/alarms.html#cancel
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
+    // TODO: Enable periodic notification on pause
+    // See https://developer.android.com/training/scheduling/alarms.html#set
+    @Override
+    protected void onPause() {
+        super.onPause();
+        // TODO: Create notification
+        // See http://developer.android.com/guide/topics/ui/notifiers/notifications.html#CreateNotification
+    }
+
     /**
      * Display bitmap using a subclass of SimpleCursorAdapter.
      * See http://stackoverflow.com/a/460927/1665730
