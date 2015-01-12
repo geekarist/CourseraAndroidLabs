@@ -3,6 +3,8 @@ package com.github.geekarist.dailyselfie;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -11,6 +13,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
@@ -33,6 +37,47 @@ public class ManageSelfiesActivity extends ListActivity {
     private static final String TAG = ManageSelfiesActivity.class.getSimpleName();
     private String mCurrentPhotoPath;
 
+    private static int calculateInSampleSize(
+            BitmapFactory.Options options, int reqWidth, int reqHeight) {
+        // Raw height and width of image
+        final int height = options.outHeight;
+        final int width = options.outWidth;
+        int inSampleSize = 1;
+
+        if (height > reqHeight || width > reqWidth) {
+
+            final int halfHeight = height / 2;
+            final int halfWidth = width / 2;
+
+            // Calculate the largest inSampleSize value that is a power of 2 and keeps both
+            // height and width larger than the requested height and width.
+            while ((halfHeight / inSampleSize) > reqHeight
+                    && (halfWidth / inSampleSize) > reqWidth) {
+                inSampleSize *= 2;
+            }
+        }
+
+        return inSampleSize;
+    }
+
+    /*
+     * Load scaled down bitmap
+     * See http://developer.android.com/training/displaying-bitmaps/load-bitmap.html#load-bitmap
+     */
+    private static Bitmap decodeSampledBitmapFromFile(String imgPath, int reqWidth, int reqHeight) {
+        // First decode with inJustDecodeBounds=true to check dimensions
+        final BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(imgPath, options);
+
+        // Calculate inSampleSize
+        options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
+
+        // Decode bitmap with inSampleSize set
+        options.inJustDecodeBounds = false;
+        return BitmapFactory.decodeFile(imgPath, options);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,22 +86,33 @@ public class ManageSelfiesActivity extends ListActivity {
         // See http://stackoverflow.com/a/12329651/1665730
         Cursor mCursor = getContentResolver().query(
                 MediaStore.Images.Media.EXTERNAL_CONTENT_URI, null,
-                format("%s LIKE ?", MediaStore.Audio.Media.DATA),
+                format("%s LIKE ?", MediaStore.Images.Media.DATA),
                 new String[]{"%DailySelfie%"}, MediaStore.MediaColumns.DATE_MODIFIED);
         startManagingCursor(mCursor);
 
-        ListAdapter adapter = new SimpleCursorAdapter(this, R.layout.two_line_list_item, mCursor,
-                new String[]{MediaStore.Images.ImageColumns.DISPLAY_NAME, MediaStore.Images.ImageColumns.DATA},
-                new int[]{R.id.text1, R.id.text2});
+        ListAdapter adapter = createAdapter(mCursor);
 
         setListAdapter(adapter);
     }
 
-    // TODO: load scaled down bitmap into image view for each picture.
-    // See http://developer.android.com/training/displaying-bitmaps/load-bitmap.html#load-bitmap
-
-    // TODO: display bitmap using a subclass of SimpleCursorAdapter
-    // See http://stackoverflow.com/a/460927/1665730
+    /**
+     * Display bitmap using a subclass of SimpleCursorAdapter.
+     * See http://stackoverflow.com/a/460927/1665730
+     */
+    private ListAdapter createAdapter(final Cursor mCursor) {
+        return new SimpleCursorAdapter(this, R.layout.two_line_list_item, mCursor,
+                new String[]{MediaStore.Images.ImageColumns.DISPLAY_NAME, MediaStore.Images.ImageColumns.DATA},
+                new int[]{R.id.text1, R.id.text2}) {
+            @Override
+            public View getView(int position, View convertView, ViewGroup parent) {
+                View view = super.getView(position, convertView, parent);
+                String imgPath = mCursor.getString(mCursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA));
+                ImageView itemImageView = (ImageView) view.findViewById(R.id.imageView);
+                itemImageView.setImageBitmap(decodeSampledBitmapFromFile(imgPath, 100, 100));
+                return view;
+            }
+        };
+    }
 
     @Override
     protected void onListItemClick(ListView l, View v, int position, long id) {

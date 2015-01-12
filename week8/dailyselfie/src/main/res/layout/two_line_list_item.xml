@@ -5,28 +5,33 @@
     android:orientation="horizontal">
 
     <ImageView
+        android:id="@+id/imageView"
         android:layout_width="75dp"
-        android:layout_height="75dp"
-        android:id="@+id/imageView" />
+        android:layout_height="75dp" />
 
     <LinearLayout
-        android:orientation="vertical"
         android:layout_width="fill_parent"
-        android:layout_height="75dp">
+        android:layout_height="75dp"
+        android:orientation="vertical">
 
         <TextView
             android:id="@+id/text1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="13sp"
-            android:textStyle="bold"
-            android:textIsSelectable="false" />
+            android:padding="6sp"
+            android:paddingBottom="0sp"
+            android:textIsSelectable="false"
+            android:textSize="12sp"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/text2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="13sp" />
+            android:padding="6sp"
+            android:paddingTop="0sp"
+            android:textSize="12sp" />
+
     </LinearLayout>
 
 </LinearLayout>
