@@ -1,6 +1,9 @@
 package com.github.geekarist.dailyselfie;
 
+import android.app.AlarmManager;
 import android.app.ListActivity;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -104,11 +107,18 @@ public class ManageSelfiesActivity extends ListActivity {
 
     // TODO: Enable periodic notification on pause
     // See https://developer.android.com/training/scheduling/alarms.html#set
+    // TODO: Create notification
+    // See http://developer.android.com/guide/topics/ui/notifiers/notifications.html#CreateNotification
     @Override
     protected void onPause() {
+        startService(new Intent(getApplicationContext(), NotifyService.class));
+        AlarmManager alarmMgr = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        long interval = AlarmManager.INTERVAL_HOUR / 360;
+        Log.d(TAG, String.format("Will send a notification every %d ms", interval));
+        Intent sendNotificationIntent = new Intent(getApplicationContext(), NotifyService.class);
+        PendingIntent alarmIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, sendNotificationIntent, 0);
+        alarmMgr.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, interval, interval, alarmIntent);
         super.onPause();
-        // TODO: Create notification
-        // See http://developer.android.com/guide/topics/ui/notifiers/notifications.html#CreateNotification
     }
 
     /**
@@ -205,5 +215,4 @@ public class ManageSelfiesActivity extends ListActivity {
         Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, contentUri);
         sendBroadcast(mediaScanIntent);
     }
-
 }
