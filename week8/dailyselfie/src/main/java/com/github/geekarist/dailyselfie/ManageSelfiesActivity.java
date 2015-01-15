@@ -11,6 +11,7 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.SystemClock;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.Menu;
@@ -39,6 +40,7 @@ public class ManageSelfiesActivity extends ListActivity {
     private static final int REQUEST_IMAGE_CAPTURE = 1;
     private static final String TAG = ManageSelfiesActivity.class.getSimpleName();
     private String mCurrentPhotoPath;
+    private PendingIntent mAlarmIntent;
 
     private static int calculateInSampleSize(
             BitmapFactory.Options options, int reqWidth, int reqHeight) {
@@ -96,29 +98,40 @@ public class ManageSelfiesActivity extends ListActivity {
         ListAdapter adapter = createAdapter(mCursor);
 
         setListAdapter(adapter);
+
+        // TODO: restore pending alarm intent from saved state
+        mAlarmIntent = null;
     }
 
-    // TODO: Disable periodic notification on resume
-    // https://developer.android.com/training/scheduling/alarms.html#cancel
     @Override
     protected void onResume() {
         super.onResume();
+        AlarmManager alarmMgr = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        if (mAlarmIntent != null) {
+            alarmMgr.cancel(mAlarmIntent);
+        }
     }
 
-    // TODO: Enable periodic notification on pause
-    // See https://developer.android.com/training/scheduling/alarms.html#set
-    // TODO: Create notification
-    // See http://developer.android.com/guide/topics/ui/notifiers/notifications.html#CreateNotification
     @Override
     protected void onPause() {
-        startService(new Intent(getApplicationContext(), NotifyService.class));
+        super.onPause();
         AlarmManager alarmMgr = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         long interval = AlarmManager.INTERVAL_HOUR / 360;
         Log.d(TAG, String.format("Will send a notification every %d ms", interval));
         Intent sendNotificationIntent = new Intent(getApplicationContext(), NotifyService.class);
-        PendingIntent alarmIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, sendNotificationIntent, 0);
-        alarmMgr.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, interval, interval, alarmIntent);
-        super.onPause();
+        sendNotificationIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        mAlarmIntent = PendingIntent.getService(getApplicationContext(), 0, sendNotificationIntent, 0);
+        alarmMgr.setInexactRepeating(
+                AlarmManager.ELAPSED_REALTIME_WAKEUP,
+                SystemClock.elapsedRealtime() + interval,
+                interval,
+                mAlarmIntent);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        // TODO: save pending alarm intent to state
     }
 
     /**
