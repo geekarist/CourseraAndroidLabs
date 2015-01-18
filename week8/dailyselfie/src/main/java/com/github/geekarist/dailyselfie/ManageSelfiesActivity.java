@@ -99,14 +99,17 @@ public class ManageSelfiesActivity extends ListActivity {
 
         setListAdapter(adapter);
 
-        // TODO: restore pending alarm intent from saved state
-        mAlarmIntent = null;
+        // TODO: Restore alarm intent to cancel it
+        if (savedInstanceState != null) {
+            mAlarmIntent = savedInstanceState.getParcelable("alarmIntent");
+        }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         AlarmManager alarmMgr = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        // TODO: Cancel alarm intent
         if (mAlarmIntent != null) {
             alarmMgr.cancel(mAlarmIntent);
         }
@@ -131,7 +134,8 @@ public class ManageSelfiesActivity extends ListActivity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        // TODO: save pending alarm intent to state
+        // TODO: Save alarm intent
+        outState.putParcelable("alarmIntent", mAlarmIntent);
     }
 
     /**
