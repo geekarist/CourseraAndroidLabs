@@ -35,12 +35,14 @@ import static java.lang.String.format;
 
 public class ManageSelfiesActivity extends ListActivity {
 
-    public static final File STORAGE_DIR = new File(
-            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM), "DailySelfie");
-    private static final int REQUEST_IMAGE_CAPTURE = 1;
+    public static final File STORAGE_DIR =
+            new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM),
+                     "DailySelfie");
+    public static final int REQUEST_CODE_ALARM_NOTIFICATION = 0;
+    public static final int REQUEST_CODE_OPEN_APP = 1;
+    public static final int REQUEST_CODE_IMAGE_CAPTURE = 2;
     private static final String TAG = ManageSelfiesActivity.class.getSimpleName();
     private String mCurrentPhotoPath;
-    private PendingIntent mAlarmIntent;
 
     private static int calculateInSampleSize(
             BitmapFactory.Options options, int reqWidth, int reqHeight) {
@@ -98,21 +100,13 @@ public class ManageSelfiesActivity extends ListActivity {
         ListAdapter adapter = createAdapter(mCursor);
 
         setListAdapter(adapter);
-
-        // TODO: Restore alarm intent to cancel it
-        if (savedInstanceState != null) {
-            mAlarmIntent = savedInstanceState.getParcelable("alarmIntent");
-        }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         AlarmManager alarmMgr = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        // TODO: Cancel alarm intent
-        if (mAlarmIntent != null) {
-            alarmMgr.cancel(mAlarmIntent);
-        }
+        alarmMgr.cancel(createAlarmIntent());
     }
 
     @Override
@@ -121,21 +115,21 @@ public class ManageSelfiesActivity extends ListActivity {
         AlarmManager alarmMgr = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         long interval = AlarmManager.INTERVAL_HOUR / 360;
         Log.d(TAG, String.format("Will send a notification every %d ms", interval));
+        alarmMgr.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
+                                     SystemClock.elapsedRealtime() + interval,
+                                     interval,
+                                     createAlarmIntent());
+    }
+
+    private PendingIntent createAlarmIntent() {
         Intent sendNotificationIntent = new Intent(getApplicationContext(), NotifyService.class);
         sendNotificationIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        mAlarmIntent = PendingIntent.getService(getApplicationContext(), 0, sendNotificationIntent, 0);
-        alarmMgr.setInexactRepeating(
-                AlarmManager.ELAPSED_REALTIME_WAKEUP,
-                SystemClock.elapsedRealtime() + interval,
-                interval,
-                mAlarmIntent);
+        return PendingIntent.getService(getApplicationContext(), REQUEST_CODE_ALARM_NOTIFICATION, sendNotificationIntent, 0);
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        // TODO: Save alarm intent
-        outState.putParcelable("alarmIntent", mAlarmIntent);
     }
 
     /**
@@ -144,8 +138,10 @@ public class ManageSelfiesActivity extends ListActivity {
      */
     private ListAdapter createAdapter(final Cursor mCursor) {
         return new SimpleCursorAdapter(this, R.layout.two_line_list_item, mCursor,
-                new String[]{MediaStore.Images.ImageColumns.DISPLAY_NAME, MediaStore.Images.ImageColumns.DATA},
-                new int[]{R.id.text1, R.id.text2}) {
+                                       new String[]{
+                                               MediaStore.Images.ImageColumns.DISPLAY_NAME,
+                                               MediaStore.Images.ImageColumns.DATA},
+                                       new int[]{R.id.text1, R.id.text2}) {
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
                 View view = super.getView(position, convertView, parent);
@@ -193,7 +189,7 @@ public class ManageSelfiesActivity extends ListActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+        if (requestCode == REQUEST_CODE_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             galleryAddPic();
         }
     }
@@ -204,7 +200,7 @@ public class ManageSelfiesActivity extends ListActivity {
             try {
                 File pictureFile = createImageFile();
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(pictureFile));
-                startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+                startActivityForResult(takePictureIntent, REQUEST_CODE_IMAGE_CAPTURE);
             } catch (IOException e) {
                 Toast.makeText(this, R.string.error_taking_picture, LENGTH_LONG).show();
                 Log.e(TAG, getString(R.string.error_taking_picture), e);

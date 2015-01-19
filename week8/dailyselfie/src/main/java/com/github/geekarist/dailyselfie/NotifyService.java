@@ -15,7 +15,6 @@ import android.os.Process;
 import android.util.Log;
 
 public class NotifyService extends Service {
-    private static final int NOTIFICATION_ID = 0;
     private static final String TAG = NotifyService.class.getSimpleName();
 
     private Looper mServiceLooper;
@@ -59,12 +58,12 @@ public class NotifyService extends Service {
             Intent notificationIntent = new Intent(NotifyService.this, ManageSelfiesActivity.class);
 
             PendingIntent contentIntent = PendingIntent.getActivity(
-                    NotifyService.this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                    NotifyService.this, ManageSelfiesActivity.REQUEST_CODE_OPEN_APP, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
             Notification.Builder builder = new Notification.Builder(NotifyService.this)
                     .setContentIntent(contentIntent)
-                    .setContentText("Yo")
-                    .setContentTitle("Yeah")
+                    .setContentText(getString(R.string.selfie_notification_text))
+                    .setContentTitle(getString(R.string.selfie_notification_title))
                     .setSmallIcon(android.R.drawable.ic_dialog_alert)
                     .setContentIntent(contentIntent)
                     .setAutoCancel(true);
