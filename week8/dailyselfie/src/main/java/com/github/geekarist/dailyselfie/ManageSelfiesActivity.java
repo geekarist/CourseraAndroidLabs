@@ -90,7 +90,7 @@ public class ManageSelfiesActivity extends ListActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_manage_selfies);
 
-        // See http://stackoverflow.com/a/12329651/1665730
+        // TODO: use a CursorLoader, see https://developer.android.com/training/load-data-background/setup-loader.html
         Cursor mCursor = getContentResolver().query(
                 MediaStore.Images.Media.EXTERNAL_CONTENT_URI, null,
                 format("%s LIKE ?", MediaStore.Images.Media.DATA),
