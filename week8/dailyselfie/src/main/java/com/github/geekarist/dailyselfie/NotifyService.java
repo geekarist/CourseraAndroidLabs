@@ -15,8 +15,8 @@ import android.os.Process;
 import android.util.Log;
 
 public class NotifyService extends Service {
+    public static final int NOTIFICATION_ID = 1;
     private static final String TAG = NotifyService.class.getSimpleName();
-
     private Looper mServiceLooper;
     private ServiceHandler mServiceHandler;
 
@@ -69,7 +69,7 @@ public class NotifyService extends Service {
                     .setAutoCancel(true);
             NotificationManager notificationManager =
                     (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-            notificationManager.notify(1, builder.build());
+            notificationManager.notify(NOTIFICATION_ID, builder.build());
         }
     }
 }

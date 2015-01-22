@@ -3,6 +3,7 @@ package com.github.geekarist.dailyselfie;
 import android.app.AlarmManager;
 import android.app.ListActivity;
 import android.app.LoaderManager;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.CursorLoader;
@@ -106,7 +107,9 @@ public class ManageSelfiesActivity extends ListActivity implements LoaderManager
         super.onResume();
         AlarmManager alarmMgr = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         alarmMgr.cancel(createAlarmIntent());
-        // TODO: delete DailySelfie notification on resume
+        NotificationManager notificationManager =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.cancel(NotifyService.NOTIFICATION_ID);
     }
 
     @Override
