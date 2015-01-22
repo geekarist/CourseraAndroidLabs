@@ -2,9 +2,12 @@ package com.github.geekarist.dailyselfie;
 
 import android.app.AlarmManager;
 import android.app.ListActivity;
+import android.app.LoaderManager;
 import android.app.PendingIntent;
 import android.content.Context;
+import android.content.CursorLoader;
 import android.content.Intent;
+import android.content.Loader;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -18,8 +21,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CursorAdapter;
 import android.widget.ImageView;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Toast;
@@ -33,16 +36,20 @@ import static android.widget.Toast.LENGTH_LONG;
 import static java.lang.String.format;
 
 
-public class ManageSelfiesActivity extends ListActivity {
+public class ManageSelfiesActivity extends ListActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
     public static final File STORAGE_DIR =
             new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM),
                      "DailySelfie");
+
     public static final int REQUEST_CODE_ALARM_NOTIFICATION = 0;
     public static final int REQUEST_CODE_OPEN_APP = 1;
     public static final int REQUEST_CODE_IMAGE_CAPTURE = 2;
     private static final String TAG = ManageSelfiesActivity.class.getSimpleName();
+    private static final int LOADER_ID = 0;
+
     private String mCurrentPhotoPath;
+    private SimpleCursorAdapter mAdapter;
 
     private static int calculateInSampleSize(
             BitmapFactory.Options options, int reqWidth, int reqHeight) {
@@ -89,17 +96,9 @@ public class ManageSelfiesActivity extends ListActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_manage_selfies);
-
-        // TODO: use a CursorLoader, see https://developer.android.com/training/load-data-background/setup-loader.html
-        Cursor mCursor = getContentResolver().query(
-                MediaStore.Images.Media.EXTERNAL_CONTENT_URI, null,
-                format("%s LIKE ?", MediaStore.Images.Media.DATA),
-                new String[]{"%DailySelfie%"}, MediaStore.MediaColumns.DATE_MODIFIED);
-        startManagingCursor(mCursor);
-
-        ListAdapter adapter = createAdapter(mCursor);
-
-        setListAdapter(adapter);
+        getLoaderManager().initLoader(LOADER_ID, null, this);
+        mAdapter = createAdapter(null);
+        setListAdapter(mAdapter);
     }
 
     @Override
@@ -107,6 +106,7 @@ public class ManageSelfiesActivity extends ListActivity {
         super.onResume();
         AlarmManager alarmMgr = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         alarmMgr.cancel(createAlarmIntent());
+        // TODO: delete DailySelfie notification on resume
     }
 
     @Override
@@ -127,27 +127,26 @@ public class ManageSelfiesActivity extends ListActivity {
         return PendingIntent.getService(getApplicationContext(), REQUEST_CODE_ALARM_NOTIFICATION, sendNotificationIntent, 0);
     }
 
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-    }
-
     /**
      * Display bitmap using a subclass of SimpleCursorAdapter.
      * See http://stackoverflow.com/a/460927/1665730
      */
-    private ListAdapter createAdapter(final Cursor mCursor) {
+    private SimpleCursorAdapter createAdapter(final Cursor mCursor) {
         return new SimpleCursorAdapter(this, R.layout.two_line_list_item, mCursor,
                                        new String[]{
                                                MediaStore.Images.ImageColumns.DISPLAY_NAME,
                                                MediaStore.Images.ImageColumns.DATA},
-                                       new int[]{R.id.text1, R.id.text2}) {
+                                       new int[]{R.id.text1, R.id.text2},
+                                       CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER) {
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
                 View view = super.getView(position, convertView, parent);
-                String imgPath = mCursor.getString(mCursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA));
-                ImageView itemImageView = (ImageView) view.findViewById(R.id.imageView);
-                itemImageView.setImageBitmap(decodeSampledBitmapFromFile(imgPath, 100, 100));
+                Cursor cursor = getCursor();
+                if (cursor != null) {
+                    String imgPath = cursor.getString(cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA));
+                    ImageView itemImageView = (ImageView) view.findViewById(R.id.imageView);
+                    itemImageView.setImageBitmap(decodeSampledBitmapFromFile(imgPath, 100, 100));
+                }
                 return view;
             }
         };
@@ -227,5 +226,27 @@ public class ManageSelfiesActivity extends ListActivity {
         Uri contentUri = Uri.fromFile(f);
         Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, contentUri);
         sendBroadcast(mediaScanIntent);
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        switch (id) {
+            case LOADER_ID:
+                return new CursorLoader(this, MediaStore.Images.Media.EXTERNAL_CONTENT_URI, null,
+                                        format("%s LIKE ?", MediaStore.Images.Media.DATA),
+                                        new String[]{"%DailySelfie%"}, MediaStore.MediaColumns.DATE_MODIFIED);
+            default:
+                return null;
+        }
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        mAdapter.changeCursor(data);
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+        mAdapter.changeCursor(null);
     }
 }
