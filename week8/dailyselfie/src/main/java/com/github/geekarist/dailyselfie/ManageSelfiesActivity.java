@@ -20,6 +20,7 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -96,13 +97,15 @@ public class ManageSelfiesActivity extends ListActivity implements LoaderManager
 
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-        // TODO setup context menu for deleting an item, see http://developer.android.com/guide/topics/ui/menus.html#context-menu
         super.onCreateContextMenu(menu, v, menuInfo);
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.selfie_context_menu, menu);
     }
 
     @Override
     public boolean onContextItemSelected(MenuItem item) {
         return super.onContextItemSelected(item);
+        // TODO: delete selfie
     }
 
     @Override
@@ -112,6 +115,7 @@ public class ManageSelfiesActivity extends ListActivity implements LoaderManager
         getLoaderManager().initLoader(LOADER_ID, null, this);
         mAdapter = createAdapter(null);
         setListAdapter(mAdapter);
+        registerForContextMenu(getListView());
     }
 
     @Override

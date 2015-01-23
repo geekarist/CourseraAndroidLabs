@@ -12,5 +12,6 @@
     <string name="error_inserting_image">Error while inserting image to media store: %s</string>
     <string name="selfie_notification_text">Time for another selfie!</string>
     <string name="selfie_notification_title">DailySelfie</string>
+    <string name="context_menu_delete">Delete</string>
 
 </resources>
